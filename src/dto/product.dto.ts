@@ -3,6 +3,6 @@ export interface CreateProductDTO {
     price: number;
     qty: number;
     description: string;
-    category: string;
-    image: string;
+    categoryId: string;
+    images: [string];
 }

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Role, Status } from '../common/enums/enums';
+import { Roles, Status } from '../common/enums/enums';
 
 
 const userSchema = new mongoose.Schema({
@@ -17,10 +17,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    role: {
+    roleId: {
         type: String,
-        enum: Role,
-        default: Role.GUEST
     },
 
     status: {

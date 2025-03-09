@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import { CreateUserDTO } from "../dto/user.dto";
-import { Role, Status } from "../common/enums/enums";
+import { Roles, Status } from "../common/enums/enums";
 import User from "../models/user.mode";
+import RoleModel from "../models/role.model";
 import tokenService from "./token.service";
 import { CustomError } from "../common/errors/CustomError";
 
@@ -20,25 +21,34 @@ class AuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const role = await RoleModel.findOne({ name: Roles.ADMIN });
+    if (!role) {
+      throw new CustomError("Sorry! Role not found.", 400);
+    }
+
+    const roleId: string = role._id.toString();
+
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
-      role: Role.ADMIN,
+      roleId: roleId,
       avatar,
     });
 
     await newUser.save();
 
-    const accessToken = tokenService.generateAccessToken(newUser._id.toString());
-    const refreshToken = tokenService.generateRefreshToken(newUser._id.toString());
+    const accessToken = tokenService.generateAccessToken(newUser._id.toString(), roleId);
+    const refreshToken = tokenService.generateRefreshToken(newUser._id.toString(), roleId);
 
     const responseUserDTO = {
       id: newUser._id,
       username: newUser.username,
       email: newUser.email,
       avatar: newUser.avatar,
-      role: newUser.role,
+      role: {
+        name: role.name
+      },
       tokens: { accessToken, refreshToken },
     };
 
@@ -62,15 +72,23 @@ class AuthService {
       throw new CustomError("Sorry! Invalid username or password.", 400);
     }
 
-    const accessToken = tokenService.generateAccessToken(user._id.toString());
-    const refreshToken = tokenService.generateRefreshToken(user._id.toString());
+    const role = await RoleModel.findOne({ _id: user.roleId });
+    if (!role) {
+      throw new CustomError("Sorry! Role not found.", 400);
+    }
+
+    const roleId: string = role._id.toString();
+    const accessToken = tokenService.generateAccessToken(user._id.toString(), roleId);
+    const refreshToken = tokenService.generateRefreshToken(user._id.toString(), roleId);
 
     const responseUserDTO = {
       id: user._id,
       username: user.username,
       email: user.email,
       avatar: user.avatar,
-      role: user.role,
+      role: {
+        name: role.name
+      },
       tokens: { accessToken, refreshToken },
     };
 
@@ -91,25 +109,34 @@ class AuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const role = await RoleModel.findOne({ name: Roles.GUEST });
+    if (!role) {
+      throw new CustomError("Sorry! Role not found.", 400);
+    }
+
+    const roleId: string = role._id.toString();
+
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
-      role: Role.GUEST,
+      roleId: roleId,
       avatar,
     });
 
     await newUser.save();
 
-    const accessToken = tokenService.generateAccessToken(newUser._id.toString());
-    const refreshToken = tokenService.generateRefreshToken(newUser._id.toString());
+    const accessToken = tokenService.generateAccessToken(newUser._id.toString(), roleId);
+    const refreshToken = tokenService.generateRefreshToken(newUser._id.toString(), roleId);
 
     const responseUserDTO = {
       id: newUser._id,
       username: newUser.username,
       email: newUser.email,
       avatar: newUser.avatar,
-      role: newUser.role,
+      role: {
+        name: role.name
+      },
       tokens: { accessToken, refreshToken },
     };
 
@@ -133,15 +160,24 @@ class AuthService {
       throw new CustomError("Sorry! Invalid username or password.", 400);
     }
 
-    const accessToken = tokenService.generateAccessToken(user._id.toString());
-    const refreshToken = tokenService.generateRefreshToken(user._id.toString());
+    const role = await RoleModel.findOne({ _id: user.roleId });
+    if (!role) {
+      throw new CustomError("Sorry! Role not found.", 400);
+    }
+
+    const roleId: string = role._id.toString();
+
+    const accessToken = tokenService.generateAccessToken(user._id.toString(), roleId);
+    const refreshToken = tokenService.generateRefreshToken(user._id.toString(), roleId);
 
     const responseUserDTO = {
       id: user._id,
       username: user.username,
       email: user.email,
       avatar: user.avatar,
-      role: user.role,
+      role: {
+        name: role.name
+      },
       tokens: { accessToken, refreshToken },
     };
 
@@ -149,17 +185,24 @@ class AuthService {
 
   }
 
-  
+
 
   public async generateAccessToken(refreshToken: string) {
-    const {userId} = tokenService.extractToken(refreshToken);
+    const { userId } = tokenService.extractToken(refreshToken);
     const user
       = await User.findById(userId);
-    if(!user || user.status === Status.INACTIVE){
+    if (!user || user.status === Status.INACTIVE) {
       throw new CustomError("Access denied", 401);
     }
 
-    const accessToken = tokenService.generateAccessToken(user._id.toString());
+    const role = await RoleModel.findOne({ _id: user.roleId });
+    if (!role) {
+      throw new CustomError("Sorry! Role not found.", 400);
+    }
+
+    const roleId: string = role._id.toString();
+
+    const accessToken = tokenService.generateAccessToken(user._id.toString(), roleId);
     return { accessToken };
   }
 }

@@ -8,7 +8,7 @@ class ProductService {
     public async create(product: CreateProductDTO) {
         const { name, price, description, categoryId, images, qty } = product;
         const existingProduct = await Product.findOne({
-            name
+            name : name
         });
 
         if (existingProduct) {

@@ -3,7 +3,7 @@ export enum Status{
     INACTIVE = 'INACTIVE',
 }
 
-export enum Role{
+export enum Roles{
     ADMIN = 'ADMIN',
     GUEST = 'GUEST',
 }

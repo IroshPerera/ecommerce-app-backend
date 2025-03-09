@@ -8,7 +8,7 @@ class ProductService {
     public async create(product: CreateProductDTO) {
         const { name, price, description, categoryId, images, qty } = product;
         const existingProduct = await Product.findOne({
-            name : name
+            name: name
         });
 
         if (existingProduct) {
@@ -45,6 +45,30 @@ class ProductService {
                 name: existingCategory.name
             },
             images: newProduct.images
+        };
+        return responseProductDTO;
+    }
+
+    public async findById(id: string) {
+        const existingProduct = await
+            Product.findById(id);
+        if (!existingProduct) {
+            throw new CustomError("Sorry! This product does not exist", 400);
+        }
+
+
+        const category: any = await Category.findById(existingProduct.category);
+
+        const responseProductDTO = {
+            id: existingProduct._id,
+            name: existingProduct.name,
+            price: existingProduct.price,
+            qty: existingProduct.qty,
+            description: existingProduct.description,
+            category: {
+                name: category.name,
+            },
+            images: existingProduct.images
         };
         return responseProductDTO;
     }

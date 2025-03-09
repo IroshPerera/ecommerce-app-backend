@@ -7,6 +7,7 @@ import webAuthRoutes from "./routes/web/auth.route";
 import categoryRoutes from "./routes/category.route";
 import errorHandler from "./middlewares/error.middleware";
 import adminProductRoutes from "./routes/admin/product.route";
+import productRoutes from "./routes/product.route";
 
 
 
@@ -27,6 +28,7 @@ app.use("/api/v1/web/auth", webAuthRoutes);
 // Global Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/categories", categoryRoutes);
+app.use("/api/v1/products", productRoutes);
 
 app.use(errorHandler);
 

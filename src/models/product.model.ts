@@ -1,7 +1,12 @@
 import mongoose from "mongoose";
+import { Status } from "../common/enums/enums";
 
 const productSchema = new mongoose.Schema({
     name: {
+        type: String,
+        required: true,
+    },
+    slug: {
         type: String,
         required: true,
     },
@@ -24,6 +29,12 @@ const productSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
+    },
+    status: {
+        type: String,
+        enum: Object.values(Status),
+        required: true,
+        default: Status.ACTIVE,
     },
     images: {
         type: [String],

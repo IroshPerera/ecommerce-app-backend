@@ -20,3 +20,12 @@ export enum Category{
     LG = 'LG',
     GOOGLE = 'GOOGLE',
 }
+
+export enum ProductSortBy{
+    PRICE_ASC = 'PRICE_ASC',
+    PRICE_DESC = 'PRICE_DESC',
+    NAME_ASC = 'NAME_ASC',
+    NAME_DESC = 'NAME_DESC',
+    CREATED_AT_ASC = 'CREATED_AT_ASC',
+    CREATED_AT_DESC = 'CREATED_AT_DESC',
+}

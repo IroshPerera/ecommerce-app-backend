@@ -7,7 +7,7 @@ class TokenService {
     return jwt.sign(
       { userId, type: "acc", roleId: roleId },
       process.env.JWT_SECRET as string,
-      { expiresIn: "5m" }
+      { expiresIn: "10h" }
     );
   }
 

@@ -9,7 +9,7 @@ import { CustomError } from "../common/errors/CustomError";
 
 class AuthService {
   public async adminSignup(createUserDto: CreateUserDTO) {
-    const { username, email, password, avatar } = createUserDto;
+    const { firstName,lastName, email, password, avatar, phone, address } = createUserDto;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -29,11 +29,16 @@ class AuthService {
     const roleId: string = role._id.toString();
 
     const newUser = new User({
-      username,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
       roleId: roleId,
       avatar,
+      contact: {
+        phone,
+        address
+      }
     });
 
     await newUser.save();
@@ -43,12 +48,15 @@ class AuthService {
 
     const responseUserDTO = {
       id: newUser._id,
-      username: newUser.username,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
       email: newUser.email,
       avatar: newUser.avatar,
       role: {
         name: role.name
       },
+      phone: newUser.contact?.phone || '',
+      address: newUser.contact?.address || '',
       tokens: { accessToken, refreshToken },
     };
 
@@ -83,12 +91,15 @@ class AuthService {
 
     const responseUserDTO = {
       id: user._id,
-      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       avatar: user.avatar,
       role: {
         name: role.name
       },
+      phone: user.contact?.phone || '',
+      address: user.contact?.address || '',
       tokens: { accessToken, refreshToken },
     };
 
@@ -97,7 +108,7 @@ class AuthService {
   }
 
   public async webSignup(createUserDto: CreateUserDTO) {
-    const { username, email, password, avatar } = createUserDto;
+    const { firstName,lastName, email, password, avatar, phone, address } = createUserDto;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -117,10 +128,15 @@ class AuthService {
     const roleId: string = role._id.toString();
 
     const newUser = new User({
-      username,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
       roleId: roleId,
+      contact: {
+        phone,
+        address
+      },
       avatar,
     });
 
@@ -131,12 +147,15 @@ class AuthService {
 
     const responseUserDTO = {
       id: newUser._id,
-      username: newUser.username,
+     firstName: newUser.firstName,
+      lastName: newUser.lastName,
       email: newUser.email,
       avatar: newUser.avatar,
       role: {
         name: role.name
       },
+      phone: newUser.contact?.phone || '',
+      address: newUser.contact?.address || '',
       tokens: { accessToken, refreshToken },
     };
 
@@ -172,12 +191,15 @@ class AuthService {
 
     const responseUserDTO = {
       id: user._id,
-      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       avatar: user.avatar,
       role: {
         name: role.name
       },
+      phone: user.contact?.phone || '',
+      address: user.contact?.address || '',
       tokens: { accessToken, refreshToken },
     };
 

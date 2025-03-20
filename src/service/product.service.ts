@@ -4,15 +4,26 @@ import { CreateProductDTO, FilterProductDTO, UpdateProductDTO } from "../dto/pro
 import Product from "../models/product.model";
 import Category from "../models/category.model";
 import { ProductSortBy, Status } from "../common/enums/enums";
+import Color from "../models/color.model";
+import { configDotenv } from "dotenv";
 
 class ProductService {
     public async create(product: CreateProductDTO) {
-        const { name, price, description, categoryId, images, qty } = product;
+        const { name, price, description, categoryId, colorIds, images, qty } = product;
 
         // check if category exists
         const existingCategory = await Category.findOne({
             _id: categoryId
         });
+
+        // check if colors exist
+        const existingColors = await Color.find({
+            _id: { $in: colorIds }
+        });
+
+        if (!existingColors) {
+            throw new CustomError("Sorry! This color does not exist", 400);
+        }
 
         if (!existingCategory) {
             throw new CustomError("Sorry! This category does not exist", 400);
@@ -27,6 +38,7 @@ class ProductService {
             qty,
             description,
             category: existingCategory._id,
+            colors: existingColors.map(color => color._id),
             images
         });
 
@@ -73,12 +85,22 @@ class ProductService {
             throw new CustomError("Sorry! This product does not exist", 400);
         }
 
-        const { name, price, description, categoryId, images, qty } = product;
+        const { name, price, description, categoryId, images, qty, colorIds } = product;
 
         // check if category exists
         const existingCategory = await Category.findOne({
             _id: categoryId
         });
+
+        // check if colors exist
+        const existingColors = await Color.find({
+            _id: { $in: colorIds }
+        });
+
+        if (!existingColors) {
+            throw new CustomError("Sorry! This color does not exist", 400);
+        }
+
         if (!existingCategory) {
             throw new CustomError("Sorry! This category does not exist", 400);
         }
@@ -88,6 +110,7 @@ class ProductService {
         existingProduct.qty = qty;
         existingProduct.description = description;
         existingProduct.category = existingCategory._id.toString();
+        existingProduct.colors = existingColors.map(color => color._id.toString());
         existingProduct.images = images;
 
         await existingProduct.save();
@@ -124,7 +147,7 @@ class ProductService {
         const sort = { createdAt: -1 }; // Default sorting
         const { data, pagination } = await ProductService.getPaginatedResults(Product, query, page, perPage, sort);
 
-        const responseProductDTO = data.map(product => ProductService.mapToDTO(product));
+        const responseProductDTO = await Promise.all(data.map(product => ProductService.mapToDTO(product)));
 
         return { data: responseProductDTO, pagination };
     }
@@ -138,7 +161,8 @@ class ProductService {
 
         const { data, pagination } = await ProductService.getPaginatedResults(Product, query, page, perPage, sort);
 
-        const responseProductDTO = data.map(product => ProductService.mapToDTO(product));
+        const responseProductDTO = await Promise.all(data.map(product => ProductService.mapToDTO(product)));
+
 
         return { data: responseProductDTO, pagination };
     }
@@ -169,7 +193,7 @@ class ProductService {
             [ProductSortBy.CREATED_AT_DESC]: { createdAt: -1 }
         };
 
-        return sortOptions[sortBy] || { createdAt: -1 }; 
+        return sortOptions[sortBy] || { createdAt: -1 };
     }
 
     private static getFilterQuery(filter: FilterProductDTO) {
@@ -184,15 +208,32 @@ class ProductService {
         return query;
     }
 
-    private static mapToDTO(product: any) {
+    private static async mapToDTO(product: any) {
+
+        // find category
+        const category: any = await Category.findById(product.category);
+
+        // find colors
+        const colors: any[] = await Color.find({ _id: { $in: product.colors } });
+
+
         return {
             id: product._id,
-            slug : product.slug,
+            slug: product.slug,
             name: product.name,
             price: product.price,
             qty: product.qty,
             description: product.description,
-            category: product.category,
+            category: {
+                id: category._id,
+                name: category.name
+            },
+            colors: colors.map(color => ({
+                id: (color as any)._id,
+                name: (color as any).name,
+                code : (color as any).code
+            })),
+
             images: product.images,
             status: product.status
 

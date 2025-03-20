@@ -8,6 +8,8 @@ import categoryRoutes from "./routes/category.route";
 import errorHandler from "./middlewares/error.middleware";
 import adminProductRoutes from "./routes/admin/product.route";
 import productRoutes from "./routes/product.route";
+import colorRoutes from "./routes/color.route";
+import webOrderRoutes from "./routes/web/order.route";
 
 
 
@@ -23,12 +25,14 @@ app.use("/api/v1/admin/products", adminProductRoutes);
 
 // Web Routes
 app.use("/api/v1/web/auth", webAuthRoutes);
+app.use("/api/v1/web/orders", webOrderRoutes);
 
 
 // Global Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/products", productRoutes);
+app.use("/api/v1/colors", colorRoutes);
 
 app.use(errorHandler);
 

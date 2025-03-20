@@ -8,6 +8,7 @@ export interface CreateProductDTO {
     qty: number;
     description: string;
     categoryId: string;
+    colorIds: [string];
     images: [string];
 }
 
@@ -17,6 +18,7 @@ export interface UpdateProductDTO {
     qty: number;
     description: string;
     categoryId: string;
+    colorIds: [string];
     images: [string];
 }
 

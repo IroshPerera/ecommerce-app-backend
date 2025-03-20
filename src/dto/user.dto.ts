@@ -1,18 +1,24 @@
 import { ResponseTokenDTO } from "./token.dto";
 
 export interface CreateUserDTO {
-    username: string;
+   firstName: string;
+    lastName: string;
     email: string;
     password: string;
     avatar: string;
+    phone: string;
+    address: string;
 }
 
 
 export interface ResponseUserDTO {
     id : string;
-    username: string;
+    firstName: string;
+    lastName: string;
     email: string;
     avatar: string;
     role: string;
+    phone: string;
+    address: string;
     tokens : ResponseTokenDTO;
 }

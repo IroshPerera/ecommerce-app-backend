@@ -30,6 +30,10 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    colors: {
+        type: [String],
+        required: true,
+    }, 
     status: {
         type: String,
         enum: Object.values(Status),

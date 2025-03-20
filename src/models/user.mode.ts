@@ -3,15 +3,30 @@ import { Roles, Status } from '../common/enums/enums';
 
 
 const userSchema = new mongoose.Schema({
-    username: {
+    firstName: {
         type: String,
         required: true,
-        unique: true
+        
+    },
+    lastName: {
+        type: String,
+        required: true,
     },
     email: {
         type: String,
         required: true,
         unique: true
+    },
+    contact: {  
+        phone: {
+            type: String,
+            required: true,
+            match: /^[0-9]{10}$/,
+        },
+        address: {
+            type: String,
+            required: true,
+        },
     },
     password: {
         type: String,

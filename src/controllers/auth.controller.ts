@@ -4,7 +4,6 @@ import { ApiResponse } from "../common/response/ApiResponse";
 
   export const generateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // get refresh token from request
       const refreshToken = req.headers.authorization?.split(" ")[1];
       const result = await authService.generateAccessToken(refreshToken?refreshToken:"");
       const response = new ApiResponse(result, "Access token generated successfully");

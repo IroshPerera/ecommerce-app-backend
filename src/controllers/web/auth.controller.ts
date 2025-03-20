@@ -4,9 +4,9 @@ import { ApiResponse } from "../../common/response/ApiResponse";
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { username, email, password, avatar } = req.body;
+      const { firstName,lastName, email, password, avatar,phone,address } = req.body;
   
-      const result = await authService.webSignup({ username, email, password, avatar });
+      const result = await authService.webSignup({ firstName,lastName ,email, password, avatar , phone, address});
       const response = new ApiResponse(result, "User created successfully");
       res.status(201).json(response);
     } catch (error) {

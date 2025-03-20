@@ -6,7 +6,7 @@ import { ProductSortBy } from "../../common/enums/enums";
 
 export const create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { name, price, qty, description, categoryId, images } = req.body;
+        const { name, price, qty, description, categoryId, images,colorIds } = req.body;
 
         const result = await productService.create({
             name,
@@ -14,6 +14,7 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
             qty,
             description,
             categoryId,
+            colorIds,
             images
         });
 
@@ -38,7 +39,7 @@ export const findById = async (req: Request, res: Response, next: NextFunction) 
 export const update = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
-        const { name, price, qty, description, categoryId, images } = req.body;
+        const { name, price, qty, description, categoryId, colorIds, images } = req.body;
 
         const result = await productService.update(id, {
             name,
@@ -46,6 +47,7 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
             qty,
             description,
             categoryId,
+            colorIds,
             images
         });
 
@@ -59,9 +61,6 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
 export const findAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { page , perPage, name, price, categoryId, sortBy } = req.query;
-
-        console.log(req.query); 
-
         
         const filter: FilterProductDTO = {
             name: name ? name as string : undefined,
